@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>SHADOW_V152</title>
+    <title>SHADOW_V155</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -15,12 +15,10 @@
         :root { --blood: #ff0000; --shadow-blue: #0088ff; --gold: #ffd700; --dead-black: #000000; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         
-        /* FIX: Using dvh for dynamic mobile browser heights */
         body { 
             background: var(--dead-black); 
             color: #fff; 
             font-family: 'Space Mono', monospace; 
-            height: 100vh; 
             height: 100dvh; 
             margin: 0; 
             overflow: hidden; 
@@ -54,7 +52,6 @@
         .hp-segment { height: 5px; flex-grow: 1; background: #111; transition: background 0.3s; }
         .hp-active { background: var(--blood); box-shadow: 0 0 8px var(--blood); }
 
-        /* Scrollable area must take remaining space */
         main { flex-grow: 1; overflow-y: auto; padding: 15px 20px; scrollbar-width: none; background: rgba(0,0,0,0.95); z-index: 5; position: relative; }
         .module { background: #0a0a0a; border: 1px solid #222; padding: 12px; margin-bottom: 12px; }
         .tag { font-family: 'Archivo Black'; font-size: 8px; color: var(--blood); text-transform: uppercase; margin-bottom: 5px; display: block; }
@@ -65,7 +62,6 @@
 
         .btn-strike { background: var(--blood); color: #000; font-family: 'Archivo Black'; padding: 14px; width: 100%; font-size: 11px; cursor: pointer; text-transform: uppercase; border: none; }
         
-        /* FIX: Navigation pinned to the absolute bottom of dvh */
         nav { 
             display: grid; 
             grid-template-columns: repeat(5, 1fr); 
@@ -83,17 +79,17 @@
         .shop-cost { color: var(--shadow-blue) !important; font-weight: bold; }
         .shop-buy-btn { border: 1px solid var(--blood); color: var(--blood); padding: 4px 8px; font-size: 8px; text-transform: uppercase; font-family: 'Archivo Black'; }
 
-        #note-history { margin-top: 15px; border-top: 1px solid #222; padding-top: 10px; max-height: 250px; overflow-y: auto; }
         .note-entry { font-size: 10px; background: #050505; padding: 10px; border-left: 2px solid var(--blood); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: flex-start; }
-        .note-content { flex-grow: 1; margin-right: 10px; }
-        .note-date { font-size: 7px; opacity: 0.4; display: block; margin-bottom: 4px; }
         .note-del { color: #333; font-size: 10px; cursor: pointer; transition: 0.2s; }
-        .note-del:hover { color: var(--blood); }
         
         .note-controls { display: grid; grid-template-columns: 1fr 1fr 4fr; gap: 5px; margin-top: 8px; }
         .ctrl-btn { background: #111; border: 1px solid #222; color: #444; height: 35px; display: flex; align-items: center; justify-content: center; font-size: 12px; cursor: pointer; }
         .ctrl-btn.active { color: var(--blood); border-color: var(--blood); }
         .archive-main-btn { background: #000; border: 1px solid #0044ff; color: #0044ff; font-family: 'Archivo Black'; font-size: 9px; text-transform: uppercase; }
+
+        /* CLEAR DATA SECTION */
+        .danger-zone { margin-top: 20px; border-top: 2px solid #300; padding-top: 15px; margin-bottom: 30px;}
+        .btn-purge { background: #1a0000; border: 1px solid #ff0000; color: #ff0000; font-family: 'Archivo Black'; padding: 15px; width: 100%; font-size: 10px; cursor: pointer; text-transform: uppercase; box-shadow: 0 0 10px rgba(255,0,0,0.2); }
     </style>
 </head>
 <body onload="bootShadow()">
@@ -176,18 +172,21 @@
                 <div class="space-y-2 text-[11px]">
                     <div class="flex justify-between"><span>NAME</span><span class="font-bold">SUNNY</span></div>
                     <div class="flex justify-between"><span>ALIAS</span><span class="font-bold text-red-600">SUNLESS</span></div>
-                    <div class="flex justify-between"><span>COMPANION</span><a href="https://wa.me/?text=Status_Ping" target="_blank" class="text-red-600 underline font-bold uppercase">Tasif F</a></div>
+                    <div class="flex justify-between"><span>COMPANION</span><a href="https://trigger.macrodroid.com/b375a918-afa6-40c5-aeff-619b6b4a7373/shadow_try" target="_blank" class="text-red-600 underline font-bold uppercase">TAKWA</a></div>
                 </div>
             </div>
             <div class="module"><span class="tag">Neural_Archive</span>
                 <textarea id="note-input" class="w-full h-24 bg-black border border-zinc-900 p-2 text-xs text-white outline-none mb-1" placeholder="Record entry..."></textarea>
-                <input type="file" id="media-input" class="hidden" onchange="handleFile(this)">
                 <div class="note-controls">
                     <button id="mic-btn" onclick="startVoice()" class="ctrl-btn"><i class="fa-solid fa-microphone"></i></button>
                     <button onclick="document.getElementById('media-input').click()" class="ctrl-btn"><i class="fa-solid fa-paperclip"></i></button>
                     <button onclick="archiveNote()" class="archive-main-btn">Archive Data</button>
                 </div>
-                <div id="note-history"></div>
+                <input type="file" id="media-input" class="hidden" onchange="handleFile(this)">
+                <div id="note-history" class="mt-4"></div>
+            </div>
+            <div class="danger-zone">
+                <button onclick="nuclearReset()" class="btn-purge">WIPE SYSTEM DATA (AUTH REQ)</button>
             </div>
         </section>
     </main>
@@ -203,8 +202,18 @@
     <script>
         let state = { lvl: 1, xp: 0, sp: 0, water: 0, hp: 100, tasks: [], logs: [], noteArchive: [] };
         let timer = { seconds: 0, active: false, interval: null };
-        const XP_LIMIT = 500, HYD_LIMIT = 4000, SP_CONV = 20;
+        const XP_LIMIT = 500, HYD_LIMIT = 4000, SP_CONV = 20, AUTH_KEY = "1420";
         let startTime = Date.now(), head;
+
+        function nuclearReset() {
+            const pass = prompt("CONFIRM PURGE CODE:");
+            if (pass === AUTH_KEY) {
+                localStorage.removeItem("SHADOW_DATA_FINAL");
+                location.reload();
+            } else {
+                pushLog("ERR: INVALID AUTH KEY");
+            }
+        }
 
         function startVoice() {
             const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -236,7 +245,7 @@
         function renderArchive() {
             const box = document.getElementById('note-history');
             if(!box) return;
-            box.innerHTML = (state.noteArchive || []).map(n => `<div class="note-entry"><div class="note-content"><span class="note-date">${n.date}</span>${n.text}</div><i class="fa-solid fa-trash-can note-del" onclick="deleteNote(${n.id})"></i></div>`).join('');
+            box.innerHTML = (state.noteArchive || []).map(n => `<div class="note-entry"><div class="note-content"><span class="note-date" style="font-size:7px; opacity:0.4; display:block;">${n.date}</span>${n.text}</div><i class="fa-solid fa-trash-can note-del" onclick="deleteNote(${n.id})"></i></div>`).join('');
         }
 
         function speak(text) {
@@ -331,7 +340,7 @@
 
         function renderTasks() { const list = document.getElementById('q-list'); if(list) list.innerHTML = state.tasks.map((t, i) => `<div class="module flex justify-between items-center py-2"><span class="text-[10px] ${t.done?'line-through opacity-30':''}">${t.text.toUpperCase()}</span><button onclick="completeTask(${i})" class="text-red-600 text-[10px]"><i class="fa-solid ${t.done?'fa-redo':'fa-check'}"></i></button></div>`).join(''); }
         function completeTask(i) { state.tasks[i].done = !state.tasks[i].done; if(state.tasks[i].done) { gainXP(25); pushLog("OBJECTIVE SECURED"); } renderTasks(); }
-        function triggerPing() { fetch('https://trigger.macrodroid.com/77323e70-8c5b-4a14-a355-e2ac57672a2d/ping'); pushLog("PING SENT"); gainXP(5); }
+        function triggerPing() { fetch('https://trigger.macrodroid.com/b375a918-afa6-40c5-aeff-619b6b4a7373/confused'); pushLog("PING SENT"); gainXP(5); }
         function saveData() { localStorage.setItem("SHADOW_DATA_FINAL", JSON.stringify(state)); }
 
         function bootShadow() {
